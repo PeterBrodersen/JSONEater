@@ -62,7 +62,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         self.mylayercount = 0;
         self.file = ''
         self.swapEuropeAmericasCheck = False
-        self.labels = ['name','title','butik','titel','navn','itemlabel']
+        self.labels = ['name','title','butik','titel','navn','label','itemlabel']
         self.lats = ['lat','latitude','bredde','breddegrad']
         self.longs = ['long','lng','longitude','længde','længdegrad','laengde','laengdegrad']
         self.latlongsets = ['ll','latlng','latlong','latlng','coord','coords','coordinate','coordinates','koor','koord','koordinat','koordinater','point','points','punkt']
@@ -166,11 +166,11 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             for latstr in self.lats:
                 if latstr in latLng.keys() and self.isScalar(latLng[latstr]): # missing lower()
                     latitude = latLng[latstr]
-#                    method.append('Latitude based on key ' + latstr)
+#                    method.append('Latitude based on key \'' + latstr + '\'')
             for longstr in self.longs:
                 if longstr in latLng.keys() and self.isScalar(latLng[longstr]):
                     longitude = latLng[longstr]
-#                    method.append('Longitude based on key ' + longstr)
+#                    method.append('Longitude based on key \'' + longstr + '\'')
 
         elif type(latLng) is str:
             mySet = False
@@ -209,19 +209,19 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
                 l = p.lower()
                 if l in self.labels:
                     label = str(data[p])
-                    method.append('Label based on key ' + p)
+                    method.append('Label based on key \'' + p + '\'')
                 elif l in self.lats:
                     latitude = float(data[p])
-                    method.append('Latitude based on key ' + p)
+                    method.append('Latitude based on key \'' + p + '\'')
                 elif l in self.longs:
                     longitude = float(data[p])
-                    method.append('Longitude based on key ' + p)
+                    method.append('Longitude based on key \'' + p + '\'')
                 elif l in self.latlongsets:
                     coordinateset = self.latLngFromList(data[p])
                     if coordinateset:
                         latitude = coordinateset['latitude']
                         longitude = coordinateset['longitude']
-                        method.append('Coordinate pair based on key ' + p)
+                        method.append('Coordinate pair based on key \'' + p + '\'')
                 elif type(data[p]) is str: # More generic guesses if we don't understand the label
                     # Check for WKT Point
                     m = re.search(self.repoint, data[p], re.IGNORECASE)
