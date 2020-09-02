@@ -60,10 +60,15 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         self.pushButton_2.clicked.connect(self.pushButton_2_clicked)
         self.bar = QgsMessageBar()
         self.mylayercount = 0;
-        self.file = self.labels = self.lats = self.longs = self.latlongsets = ''
-        self.data = False
-        self.foundPoints = False
+        self.file = ''
         self.northernEuropeCheck = False
+        self.labels = ['name','title','butik','titel','navn','itemlabel']
+        self.lats = ['lat','latitude','bredde','breddegrad']
+        self.longs = ['long','lng','longitude','længde','længdegrad','laengde','laengdegrad']
+        self.latlongsets = ['ll','latlng','latlong','latlng','coordinates','coords','coord','coordinate','koord','koor','koordinater','koordinat','point','punkt','points']
+        self.foundPoints = []
+        self.data = False
+        self.repoint = 'Point *\( *([0-9]+(?:\.[0-9]+)) +([0-9]+(?:\.[0-9]+)) *\)'
 
     def pushButton_clicked(self):
 #        self.bar.pushMessage("Literally bar")
@@ -97,17 +102,8 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             QgsProject.instance().addMapLayer(layer)
 
     def pushButton_2_clicked(self):
-        self.file = (os.path.dirname(os.path.realpath(__file__))) + '\\latlngmixed.json'
         self.file = self.mQgsFileWidget.filePath()
-
-        self.labels = ['name','title','butik','titel','navn','itemlabel']
-        self.lats = ['lat','latitude','bredde','breddegrad']
-        self.longs = ['long','lng','longitude','længde','længdegrad','laengde','laengdegrad']
-        self.latlongsets = ['ll','latlng','latlong','latlng','coordinates','coords','coord','coordinate','koord','koor','koordinater','koordinat','point','punkt','points']
-        self.foundPoints = []
-        self.data = False
         self.northernEuropeCheck = self.checkBoxNESwap.isChecked()
-        self.repoint = 'Point *\( *([0-9]+(?:\.[0-9]+)) +([0-9]+(?:\.[0-9]+)) *\)'
 
         if not self.file:
             return False
@@ -144,7 +140,6 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             label.fieldName = 'label'
 
         layer.commitChanges()
-        
 
         QgsProject.instance().addMapLayer(layer)
 
