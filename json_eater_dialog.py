@@ -61,11 +61,11 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         self.bar = QgsMessageBar()
         self.mylayercount = 0;
         self.file = ''
-        self.northernEuropeCheck = False
+        self.swapEuropeAmericasCheck = False
         self.labels = ['name','title','butik','titel','navn','itemlabel']
         self.lats = ['lat','latitude','bredde','breddegrad']
         self.longs = ['long','lng','longitude','længde','længdegrad','laengde','laengdegrad']
-        self.latlongsets = ['ll','latlng','latlong','latlng','coordinates','coords','coord','coordinate','koord','koor','koordinater','koordinat','point','punkt','points']
+        self.latlongsets = ['ll','latlng','latlong','latlng','coord','coords','coordinate','coordinates','koor','koord','koordinat','koordinater','point','points','punkt']
         self.foundPoints = []
         self.data = False
         self.repoint = 'Point *\( *([0-9]+(?:\.[0-9]+)) +([0-9]+(?:\.[0-9]+)) *\)'
@@ -75,35 +75,30 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.mylayercount += 1
         title = 'JSONEater_layer_' + str(self.mylayercount)
-        layers = QgsProject.instance().mapLayersByName(title)
+        layer = QgsVectorLayer('Point?crs=epsg:4326&index=yes', title, 'memory')
+        pr = layer.dataProvider()
 
-        if(len(layers) > 0 ):
-            print("Duplicate")
-        else:
-            layer = QgsVectorLayer('Point?crs=epsg:4326&index=yes', title, 'memory')
-            pr = layer.dataProvider()
+        layer.startEditing()
 
-            layer.startEditing()
+        # add fields
+        pr.addAttributes(
+            [QgsField("label", QVariant.String)]
+        )
 
-            # add fields
-            pr.addAttributes(
-                [QgsField("label", QVariant.String)]
-            )
+        for x in range(9, 13):
+            for y in range (54, 59):
+                feat = QgsFeature()
+                feat.setAttributes(['My point'])
+                feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+                pr.addFeatures([feat])
 
-            for x in range(9, 13):
-                for y in range (54, 59):
-                    feat = QgsFeature()
-                    feat.setAttributes(['My point'])
-                    feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
-                    pr.addFeatures([feat])
+        layer.commitChanges()
 
-            layer.commitChanges()
-
-            QgsProject.instance().addMapLayer(layer)
+        QgsProject.instance().addMapLayer(layer)
 
     def pushButton_2_clicked(self):
         self.file = self.mQgsFileWidget.filePath()
-        self.northernEuropeCheck = self.checkBoxNESwap.isChecked()
+        self.swapEuropeAmericasCheck = self.checkBoxEASwap.isChecked()
 
         if not self.file:
             return False
@@ -143,7 +138,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
         QgsProject.instance().addMapLayer(layer)
 
-    def checkSwapLatLng(self, latitude, longitude): # Northern Europe: Check if x,y coordinates are swapped.
+    def checkSwapLatLng(self, latitude, longitude): # Europe, Americas: Check if x,y coordinates are swapped.
         if longitude > latitude: # assume swapped if longitude is larger than latitude, e.g. lng=56,lat=12 ought to be lng=12,lat=56
             latitude, longitude = longitude, latitude
         return [latitude, longitude]
@@ -174,17 +169,17 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
         elif type(latLng) is str:
             mySet = False
-            if latLng.count(',') == 1:
+            m = re.search(self.repoint, latLng, re.IGNORECASE)
+            if m:
+                longitude = float(m.group(1))
+                latitude = float(m.group(2))
+            elif latLng.count(',') == 1:
                 mySet = latLng.split(',')
             elif latLng.count(';') == 1:
                 mySet = latLng.split(';')
             elif latLng.count(' ') == 1:
                 mySet = latLng.split()
-            else:
-                m = re.search(self.repoint, data[p], re.IGNORECASE)
-                if m:
-                    longitude = float(m.group(1))
-                    latitude = float(m.group(2))
+
             if mySet:
                 latitude = float(mySet[0])
                 longitude = float(mySet[1])
@@ -221,7 +216,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
                         latitude = float(m.group(2))
 
         if latitude and longitude:
-            if self.northernEuropeCheck:
+            if self.swapEuropeAmericasCheck:
                 latitude, longitude = self.checkSwapLatLng(latitude, longitude)
             self.foundPoints.append( {'label': label, 'latitude': latitude, 'longitude': longitude})
 

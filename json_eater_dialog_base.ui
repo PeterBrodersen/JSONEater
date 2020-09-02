@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
+    <width>469</width>
     <height>222</height>
    </rect>
   </property>
@@ -65,17 +65,20 @@
     <string>Eat JSON</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBoxNESwap">
+  <widget class="QCheckBox" name="checkBoxEASwap">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>90</y>
-     <width>351</width>
-     <height>20</height>
+     <width>431</width>
+     <height>16</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Allows input where Latitude and Longitude seem to be swapped. Works for Europe and Americas.</string>
+   </property>
    <property name="text">
-    <string>Northern Europe: Accept coordinates in wrong order</string>
+    <string>Europe, Americas: Allow and fix coordinates in wrong order</string>
    </property>
    <property name="checked">
     <bool>true</bool>
