@@ -118,14 +118,15 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         pr.addAttributes(
             [
                 QgsField("label", QVariant.String),
-                QgsField("quality", QVariant.String),
                 QgsField("note", QVariant.String),
             ]
         )
 
+        separator = ', '
         for point in result:
+            method = separator.join(point['method'])
             feat = QgsFeature()
-            feat.setAttributes([point['label']])
+            feat.setAttributes([point['label'],method])
             feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(point['longitude'], point['latitude'])))
             pr.addFeatures([feat])
 
@@ -159,13 +160,17 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             if len(latLng) >= 2:
                 latitude = float(latLng[0])
                 longitude = float(latLng[1])
+#                method.append('Coordinate pair based on list')
+
         elif type(latLng) is dict:
             for latstr in self.lats:
-                if latstr in latLng.keys() and self.isScalar(latLng[latstr]):
+                if latstr in latLng.keys() and self.isScalar(latLng[latstr]): # missing lower()
                     latitude = latLng[latstr]
+#                    method.append('Latitude based on key ' + latstr)
             for longstr in self.longs:
                 if longstr in latLng.keys() and self.isScalar(latLng[longstr]):
                     longitude = latLng[longstr]
+#                    method.append('Longitude based on key ' + longstr)
 
         elif type(latLng) is str:
             mySet = False
@@ -173,12 +178,16 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             if m:
                 longitude = float(m.group(1))
                 latitude = float(m.group(2))
+#                method.append('Coordinate pair from WKT Point string')
             elif latLng.count(',') == 1:
                 mySet = latLng.split(',')
+#                method.append('Coordinate pair from comma separated string')
             elif latLng.count(';') == 1:
                 mySet = latLng.split(';')
+#                method.append('Coordinate pair from semicolon separated string')
             elif latLng.count(' ') == 1:
                 mySet = latLng.split()
+#                method.append('Coordinate pair from space separated string')
 
             if mySet:
                 latitude = float(mySet[0])
@@ -191,6 +200,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
     def guessSearch(self, data):
         label = 'Point'
         latitude = longitude = False
+        method = []
 
         for p in data:
             if type(p) is dict or type(p) is list:
@@ -199,26 +209,31 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
                 l = p.lower()
                 if l in self.labels:
                     label = str(data[p])
+                    method.append('Label based on key ' + p)
                 elif l in self.lats:
                     latitude = float(data[p])
+                    method.append('Latitude based on key ' + p)
                 elif l in self.longs:
                     longitude = float(data[p])
+                    method.append('Longitude based on key ' + p)
                 elif l in self.latlongsets:
                     coordinateset = self.latLngFromList(data[p])
                     if coordinateset:
                         latitude = coordinateset['latitude']
                         longitude = coordinateset['longitude']
+                        method.append('Coordinate pair based on key ' + p)
                 elif type(data[p]) is str: # More generic guesses if we don't understand the label
                     # Check for WKT Point
                     m = re.search(self.repoint, data[p], re.IGNORECASE)
                     if m:
                         longitude = float(m.group(1))
                         latitude = float(m.group(2))
+                        method.append('Coordinate pair from WKT Point string')
 
         if latitude and longitude:
             if self.swapEuropeAmericasCheck:
                 latitude, longitude = self.checkSwapLatLng(latitude, longitude)
-            self.foundPoints.append( {'label': label, 'latitude': latitude, 'longitude': longitude})
+            self.foundPoints.append( {'label': label, 'latitude': latitude, 'longitude': longitude, 'method': method })
 
         return
 
@@ -231,5 +246,6 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             # Let's begin the guesswork
             if type(self.data) is dict or type(self.data) is list:
                 self.guessSearch(self.data)
-
-            return self.foundPoints
+            foundPoints = self.foundPoints
+            self.foundPoints = []
+            return foundPoints
