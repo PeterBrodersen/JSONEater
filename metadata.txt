@@ -1,0 +1,39 @@
+[general]
+name=JSON Eater
+qgisMinimumVersion=3.0
+description=Flexible JSON importer for different structures - GeoJSON format is not required
+version=0.1
+author=Peter Brodersen, Findvej.dk
+email=peter@findvej.dk
+
+about=Data is stored in several formats. QGIS imports most of them, even though they usually have to be structured in a well-known format (GeoJSON, GeoPackage, FlatGeobuf, Shapefile...). Even lesser structured data such as CSV files can be imported. However QGIS only accepts JSON if it's formatted as GeoJSON. JSON Eater is flexible and imports simple point data from several JSON formats and provides qualified guesses without having to convert the JSON formatted data to other formats. JSON has to be valid though.
+
+tracker=https://github.com/PeterBrodersen/JSONEater/issues
+repository=https://github.com/PeterBrodersen/JSONEater
+# End of mandatory metadata
+
+# Recommended items:
+
+hasProcessingProvider=no
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=python,json,geojson,import
+
+homepage=https://qgis.findvej.dk/
+category=Plugins
+icon=eatericon64.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
+# plugin_dependencies=
+
+Category of the plugin: Raster, Vector, Database or Web
+# category=
+
+# If the plugin can run on QGIS Server.
+server=False
