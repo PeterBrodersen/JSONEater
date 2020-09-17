@@ -57,11 +57,11 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.pushButton.clicked.connect(self.pushButton_clicked)
-        self.pushButton_2.clicked.connect(self.pushButton_2_clicked)
+        self.pushButton_eatjson.clicked.connect(self.pushButton_eatjson_clicked)
         self.bar = QgsMessageBar()
         self.mylayercount = 0;
         self.file = ''
-        self.swapEuropeAmericasCheck = False
+        self.coordinateSwap = 0
         self.labels = ['name','title','butik','titel','navn','label','itemlabel']
         self.lats = ['lat','latitude','bredde','breddegrad']
         self.longs = ['long','lng','longitude','længde','længdegrad','laengde','laengdegrad']
@@ -96,9 +96,18 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
         QgsProject.instance().addMapLayer(layer)
 
-    def pushButton_2_clicked(self):
+    def pushButton_eatjson_clicked(self):
         self.file = self.mQgsFileWidget.filePath()
-        self.swapEuropeAmericasCheck = self.checkBoxEASwap.isChecked()
+
+        # silly code for checking radio buttons
+        if self.rb_swap_nothing.isChecked():
+            self.coordinateSwap = 0
+        if self.rb_swap_western.isChecked():
+            self.coordinateSwap = 1
+        if self.rb_swap_eastern.isChecked():
+            self.coordinateSwap = 2
+        if self.rb_swap_flip.isChecked():
+            self.coordinateSwap = 3
 
         if not self.file:
             return False
@@ -139,8 +148,12 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
         QgsProject.instance().addMapLayer(layer)
 
-    def checkSwapLatLng(self, latitude, longitude): # Europe, Americas: Check if x,y coordinates are swapped.
-        if longitude > latitude: # assume swapped if longitude is larger than latitude, e.g. lng=56,lat=12 ought to be lng=12,lat=56
+    def checkSwapLatLng(self, latitude, longitude):
+        if self.coordinateSwap == 1 and longitude > latitude: # assume swapped if longitude is larger than latitude, e.g. lng=56,lat=12 ought to be lng=12,lat=56
+            latitude, longitude = longitude, latitude
+        if self.coordinateSwap == 2 and latitude > longitude:
+            latitude, longitude = longitude, latitude
+        if self.coordinateSwap == 3:
             latitude, longitude = longitude, latitude
         return [latitude, longitude]
 
@@ -231,8 +244,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
                         method.append('Coordinate pair from WKT Point string')
 
         if latitude and longitude:
-            if self.swapEuropeAmericasCheck:
-                latitude, longitude = self.checkSwapLatLng(latitude, longitude)
+            latitude, longitude = self.checkSwapLatLng(latitude, longitude)
             self.foundPoints.append( {'label': label, 'latitude': latitude, 'longitude': longitude, 'method': method })
 
         return
