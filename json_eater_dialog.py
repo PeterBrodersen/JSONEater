@@ -56,7 +56,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.pushButton.clicked.connect(self.pushButton_clicked)
+#        self.pushButton.clicked.connect(self.pushButton_clicked)
         self.pushButton_eatjson.clicked.connect(self.pushButton_eatjson_clicked)
         self.bar = QgsMessageBar()
         self.mylayercount = 0;
@@ -71,8 +71,6 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         self.repoint = 'Point *\( *([0-9]+(?:\.[0-9]+)) +([0-9]+(?:\.[0-9]+)) *\)'
 
     def pushButton_clicked(self):
-#        self.bar.pushMessage("Literally bar")
-
         self.mylayercount += 1
         title = 'JSONEater_layer_' + str(self.mylayercount)
         layer = QgsVectorLayer('Point?crs=epsg:4326&index=yes', title, 'memory')
@@ -139,10 +137,10 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
             feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(point['longitude'], point['latitude'])))
             pr.addFeatures([feat])
 
-        if self.checkBoxDisplayLabels.isChecked():
-            label = QgsPalLayerSettings()
-            label.enabled = True
-            label.fieldName = 'label'
+#        if self.checkBoxDisplayLabels.isChecked():
+#            label = QgsPalLayerSettings()
+#            label.enabled = True
+#            label.fieldName = 'label'
 
         layer.commitChanges()
 

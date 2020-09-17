@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>468</width>
-    <height>308</height>
+    <height>275</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,46 +39,17 @@
     <string>Open JSON file</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>260</y>
-     <width>161</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Add some points</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton_eatjson">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>260</y>
+     <y>230</y>
      <width>141</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
     <string>Eat JSON</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBoxDisplayLabels">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>230</y>
-     <width>351</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Display labels on layer</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
