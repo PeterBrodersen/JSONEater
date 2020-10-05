@@ -2,7 +2,7 @@
 name=JSON Eater
 qgisMinimumVersion=3.0
 description=Flexible JSON importer for different structures - GeoJSON format is not required
-version=0.1
+version=0.2
 author=Peter Brodersen, Findvej.dk
 email=peter@findvej.dk
 
@@ -16,7 +16,7 @@ repository=https://github.com/PeterBrodersen/JSONEater
 
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=Code cleanup, wider UI to prevent text cropping
 
 # Tags are comma separated with spaces allowed
 tags=python,json,geojson,import
