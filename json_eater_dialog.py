@@ -59,7 +59,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 #        self.pushButton.clicked.connect(self.pushButton_clicked)
         self.pushButton_eatjson.clicked.connect(self.pushButton_eatjson_clicked)
         self.bar = QgsMessageBar()
-        self.mylayercount = 0;
+        self.mylayercount = 0
         self.file = ''
         self.coordinateSwap = 0
         self.labels = ['name','title','butik','titel','navn','label','itemlabel']
@@ -68,7 +68,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         self.latlongsets = ['ll','latlng','latlong','latlng','coord','coords','coordinate','coordinates','koor','koord','koordinat','koordinater','point','points','punkt']
         self.foundPoints = []
         self.data = False
-        self.repoint = 'Point *\( *([0-9]+(?:\.[0-9]+)) +([0-9]+(?:\.[0-9]+)) *\)'
+        self.repoint = 'Point *\\( *([0-9]+(?:\\.[0-9]+)) +([0-9]+(?:\\.[0-9]+)) *\\)'
 
     def pushButton_clicked(self):
         self.mylayercount += 1
@@ -96,6 +96,8 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def pushButton_eatjson_clicked(self):
         self.file = self.mQgsFileWidget.filePath()
+        if not self.file:
+            return False
 
         # silly code for checking radio buttons
         if self.rb_swap_nothing.isChecked():
@@ -107,8 +109,6 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.rb_swap_flip.isChecked():
             self.coordinateSwap = 3
 
-        if not self.file:
-            return False
         result = self.beginEat()
         if result:
             self.displayResult(result)
@@ -251,7 +251,7 @@ class JSONEaterDialog(QtWidgets.QDialog, FORM_CLASS):
         with open(self.file, "r") as json_file:
             if not self.validateJSON(json_file):
                 print("JSON is not valid!")
-                return False;
+                return False
 
             # Let's begin the guesswork
             if type(self.data) is dict or type(self.data) is list:
